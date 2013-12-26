@@ -21,6 +21,8 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 import threading
+import logging
+
 class SignalInterfaceBase(object):
 
 	signals = [	
@@ -94,6 +96,7 @@ class SignalInterfaceBase(object):
 		]
 	
 	def __init__(self):#@@TODO unified naming pattern
+		self.log = logging.getLogger(__name__)
 		self.registeredSignals = {}
 	
 	def getSignals(self):
@@ -107,7 +110,7 @@ class SignalInterfaceBase(object):
 				self.registeredSignals[signalName] = [callback]
 				
 	def _sendAsync(self, signalName, args=()):
-		#print "Sending signal %s" % signalName
+		self.log.debug("Sending signal", signalName)
 		listeners = self.getListeners(signalName)
 		for l in listeners:
 			threading.Thread(target = l, args = args).start()
@@ -210,12 +213,12 @@ class MethodInterfaceBase(object):
 			"media_requestUpload"
 			]
 	def __init__(self):
+		self.log = logging.getLogger(__name__)
 		self.registeredMethods = {}
 
 
 	def call(self, methodName, params=()):
-		print "SHOULD CALL"
-		print methodName
+		self.log.debug("Calling ", methodName)
 		callback = self.getCallback(methodName)
 		if callback:
 			return callback(*params)

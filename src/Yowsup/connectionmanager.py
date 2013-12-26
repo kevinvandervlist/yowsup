@@ -135,7 +135,6 @@ class YowsupConnectionManager:
 		self.methodInterface.registerCallback("group_getInfo",self.sendGetGroupInfo)
 		self.methodInterface.registerCallback("group_create",self.sendCreateGroupChat)
 		self.methodInterface.registerCallback("group_addParticipants",self.sendAddParticipants)
-                self.methodInterface.registerCallback("group_addParticipant",self.sendAddParticipant)
 		self.methodInterface.registerCallback("group_removeParticipants",self.sendRemoveParticipants)
 		self.methodInterface.registerCallback("group_end",self.sendEndGroupChat)
 		self.methodInterface.registerCallback("group_setSubject",self.sendSetGroupSubject)
@@ -549,19 +548,19 @@ class YowsupConnectionManager:
 
 		self._writeNode(iqNode)
 
-        def sendAddParticipant(self, gjid, participants):
-                self._d("opening group: %s"%(gjid))
-                self._d("adding participants: %s"%(participants))
-                idx = self.makeId("add_group_participants_")
-                self.readerThread.requests[idx] = self.readerThread.parseAddedParticipants;
-                innerNodeChildren = []
-                
-                innerNodeChildren.append( ProtocolTreeNode("participant",{"jid":participants}) )
-                
-                queryNode = ProtocolTreeNode("add",{"xmlns":"w:g"},innerNodeChildren)
-                iqNode = ProtocolTreeNode("iq",{"id":idx,"type":"set","to":gjid},[queryNode])
-
-                self._writeNode(iqNode)
+		def sendAddParticipant(self, gjid, participants):
+			self._d("opening group: %s"%(gjid))
+			self._d("adding participants: %s"%(participants))
+			idx = self.makeId("add_group_participants_")
+			self.readerThread.requests[idx] = self.readerThread.parseAddedParticipants;
+			innerNodeChildren = []
+			
+			innerNodeChildren.append( ProtocolTreeNode("participant",{"jid":participants}) )
+			
+			queryNode = ProtocolTreeNode("add",{"xmlns":"w:g"},innerNodeChildren)
+			iqNode = ProtocolTreeNode("iq",{"id":idx,"type":"set","to":gjid},[queryNode])
+			
+			self._writeNode(iqNode)
 
 	def sendRemoveParticipants(self,gjid, participants):
 		self._d("opening group: %s"%(gjid))
