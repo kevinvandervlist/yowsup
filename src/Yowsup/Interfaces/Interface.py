@@ -110,7 +110,7 @@ class SignalInterfaceBase(object):
 				self.registeredSignals[signalName] = [callback]
 				
 	def _sendAsync(self, signalName, args=()):
-		self.log.debug("Sending signal", signalName)
+		self.log.debug("Sending signal" + signalName)
 		listeners = self.getListeners(signalName)
 		for l in listeners:
 			threading.Thread(target = l, args = args).start()
@@ -218,7 +218,7 @@ class MethodInterfaceBase(object):
 
 
 	def call(self, methodName, params=()):
-		self.log.debug("Calling ", methodName)
+		self.log.debug("Calling " + methodName)
 		callback = self.getCallback(methodName)
 		if callback:
 			return callback(*params)
