@@ -108,7 +108,11 @@ class SignalInterfaceBase(object):
 				self.registeredSignals[signalName].append(callback)
 			else:
 				self.registeredSignals[signalName] = [callback]
-				
+
+	def unregisterListener(self, signalName, callback):
+		if callback in self.registeredSignals[signalName]:
+			self.registeredSignals[signalName].remove(callback)
+			
 	def _sendAsync(self, signalName, args=()):
 		self.log.debug("Sending signal" + signalName)
 		listeners = self.getListeners(signalName)
