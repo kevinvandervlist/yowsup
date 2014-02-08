@@ -20,6 +20,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
 import time
+import logging
 
 class Debugger():
 	enabled = True
@@ -43,10 +44,11 @@ class Debugger():
 		
 		disabledTypes = ["sql"]
 		if messageType.lower() not in disabledTypes:
+			log = logging.getLogger(__name__)
 			try:
-				print(message)
+				log.debug(message)
 			except UnicodeEncodeError:
-				print ("Skipped debug message because of UnicodeDecodeError")
+				log.debug("Skipped debug message because of UnicodeDecodeError")
 	
 	def formatMessage(self,message):
 		#default = "{type}:{time}:\t{message}"
