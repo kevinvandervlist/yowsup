@@ -24,6 +24,7 @@ import dbus.service
 import os
 parentdir = os.path.dirname(os.path.dirname(os.path.abspath(__file__+"/..")))
 os.sys.path.insert(0,parentdir)
+import logging
 
 from Interfaces.Interface import SignalInterfaceBase, MethodInterfaceBase
 from connectionmanager import YowsupConnectionManager
@@ -53,6 +54,7 @@ class DBusSignalInterface(SignalInterfaceBase, dbus.service.Object):
 	DBUS_INTERFACE = "com.yowsup.signals"
 	
 	def __init__(self, connectionId):
+		self.__log = logging.getLogger(__name__)
 		self.connectionId = connectionId
 		self.busName = dbus.service.BusName(self.DBUS_INTERFACE, bus=dbus.SessionBus())
 		dbus.service.Object.__init__(self, self.busName, '/com/yowsup/%s/signals'%connectionId)
@@ -71,9 +73,9 @@ class DBusSignalInterface(SignalInterfaceBase, dbus.service.Object):
 			try:
 				currBusSig = getattr(self, s)
 				self.registerListener(s, currBusSig)
-				print("Registered %s on Dbus " % s)
+				self.__log.debug("Registered %s on Dbus " % s)
 			except AttributeError:
-				print("Skipping %s" %s)
+				self.__log.debug("Skipping %s" %s)
 
 	## Signals ##
 	

@@ -22,6 +22,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import json, sys
 from xml.dom import minidom
 import plistlib
+import logging
 
 class ResponseParser(object):
 	def __init__(self):
@@ -51,11 +52,11 @@ class ResponseParser(object):
 class XMLResponseParser(ResponseParser):
 	
 	def __init__(self):
-		
+		self.__log = logging.getLogger(__name__)
 		try:
 			import libxml2
 		except ImportError:
-			print("libxml2 XMLResponseParser requires libxml2")
+			self.__log.error("libxml2 XMLResponseParser requires libxml2")
 			sys.exit(1)
 
 		self.meta = "text/xml";
@@ -80,7 +81,7 @@ class XMLResponseParser(ResponseParser):
 				elif r.type == 'attribute':
 					vals[k].append(r.content)
 				else:
-					print("UNKNOWN TYPE")
+					self.__log.debug("UNKNOWN TYPE")
 			
 			if len(vals[k]) == 1:
 				vals[k] = vals[k][0]

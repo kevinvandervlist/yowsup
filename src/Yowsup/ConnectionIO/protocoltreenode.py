@@ -20,13 +20,14 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
 from Yowsup.Common.debugger import Debugger
-
+import logging
 
 class ProtocolTreeNode():
 	
 	def __init__(self,tag,attributes,children=None,data=None):
 
 		Debugger.attach(self)
+		self.__log = logging.getLogger(__name__)
 		
 		self.tag = tag;
 		self.attributes = attributes;
@@ -50,9 +51,9 @@ class ProtocolTreeNode():
 			out+= "</"+self.tag+">\n"
 			return out
 		except TypeError:
-			print("ignored toString call, probably encountered byte")
+			self.__log.debug("ignored toString call, probably encountered byte")
 		except UnicodeDecodeError:
-			print("ingnored toString call, encountered unicode error")
+			self.__log.error("ingnored toString call, encountered unicode error")
 		
 		
 	

@@ -1,5 +1,6 @@
 from ..Common.Http.warequest import WARequest
 import tempfile, sys
+import logging
 
 if sys.version_info >= (3, 0):
     from urllib.request import urlopen
@@ -12,6 +13,8 @@ class MediaDownloader(WARequest):
     def __init__(self, successClbk = None, errorClbk = None, progressCallback = None):
         
         super(MediaDownloader, self).__init__()
+        
+        self.__log = logging.getLogger(__name__)
         
         self.successCallback = successClbk
         self.errorCallback = errorClbk
@@ -26,7 +29,7 @@ class MediaDownloader(WARequest):
                     url = "https://" if self.port == 443 else "http://"
                     url = url + self.url
                     url = url + "?" + urlencode(self.params)
-                    print(url)
+                    self.__log.debug(url)
                 else:
                     raise Exception("No url specified for fetching")
             
@@ -62,6 +65,6 @@ class MediaDownloader(WARequest):
             if self.successCallback:
                 self.successCallback(path)
         except:
-            print("Error occured at transfer %s"%sys.exc_info()[1])
+            self.__log.error("Error occured at transfer %s"%sys.exc_info()[1])
             if self.errorCallback:
                 self.errorCallback();

@@ -24,12 +24,15 @@ from Yowsup.Common.Http.waresponseparser import JSONResponseParser
 from Yowsup.Common.constants import Constants
 from Yowsup.Common.utilities import Utilities
 import os
+import logging
+
 class WACodeRequest(WARequest):
 
 	def __init__(self,cc, p_in, idx, method="sms"):
 		super(WACodeRequest,self).__init__();
 
 		self.p_in = p_in #number
+		self.__log = logging.getLogger(__name__)
 
 		self.addParam("cc", cc);
 		self.addParam("in", p_in);
@@ -43,7 +46,7 @@ class WACodeRequest(WARequest):
 		self.currentToken = Utilities.readToken()
 
 		if self.currentToken:
-			print("Read token from %s " % os.path.expanduser(Constants.tokenStorage))
+			self.__log.info("Read token from %s " % os.path.expanduser(Constants.tokenStorage))
 		else:
 			self.currentToken = Constants.tokenData
 
@@ -64,7 +67,7 @@ class WACodeRequest(WARequest):
 			if res["status"] == "fail":
 				if res["reason"] in ("old_version", "bad_token") and Utilities.tokenCacheEnabled:
 
-					print("Failed, reason: %s. Checking for a new token.." % res["reason"])
+					self.__log.error("Failed, reason: %s. Checking for a new token.." % res["reason"])
 
 					res = WARequest.sendRequest(Constants.tokenSource[0], 80, Constants.tokenSource[1], {}, {})
 
@@ -82,14 +85,14 @@ class WACodeRequest(WARequest):
 							or 	parsed["d"] != self.currentToken["d"]
 						):
 							self.currentToken = parsed
-							print("Fetched a new token, persisting !")
+							self.__log.info("Fetched a new token, persisting !")
 
 							self.removeParam("token")
 
-							print("Now retrying the request..")
+							self.__log.info("Now retrying the request..")
 							self.addParam("token", self.getToken(self.p_in, self.currentToken["t"]))
 						else:
-							print("No new tokens :(")
+							self.__log.info("No new tokens :(")
 
 						res = super(WACodeRequest, self).send(parser)
 
